@@ -1,4 +1,62 @@
-// Get App
+# Get the app.
 GET localhost:8080
+
+### TUTORIALS ###
+### Get all tutorials.
+GET localhost:8080/tutorial
+
+### Add new tutorial.
+POST localhost:8080/tutorial
+
+### Get tutorial by tutorial id.
+GET localhost:8080/tutorial/1
+
+### Get tutorial by tutorial id.
+GET localhost:8080/tutorial/1
+
+### PODCASTS ###
+### Get all podcasts.
+GET localhost:8080/podcast
+
+### Add new podcast.
+POST localhost:8080/podcast
+Content-Type: application/json
+
+{
+  "name": "Şimdi olsa RGB dövmesi yaptırırdım",
+  "language": "tr",
+  "personName": "Test User",
+  "iframe": "<iframe width='560' height='315' src='https://www.youtube.com/embed/AhEW3Pa9jAQ' title='YouTube video player' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share' allowfullscreen></iframe>"
+}
+
+### Publish the podcast.
+PUT localhost:8080/podcast/publish/69cc3e4c-ac77-4d87-a8e6-7c9a650505fb
+
+### Featured the podcast.
+PUT localhost:8080/podcast/featured/69cc3e4c-ac77-4d87-a8e6-7c9a650505fb
+
+### Delete the podcast.
+DELETE localhost:8080/podcast/featured/69cc3e4c-ac77-4d87-a8e6-7c9a650505fb
+
+### Get tutorial by podcast id.
+GET localhost:8080/podcast/1
+
+### JOBS ###
+### Get all jobs.
+GET localhost:8080/job
+
+### Add new job.
+POST localhost:8080/job
+
+### Get job by job id.
+GET localhost:8080/job/1
+
+### USERS ###
+### Get all users.
+GET localhost:8080/user
+
+###Get user by user id.
+GET localhost:8080/user
+
 
 

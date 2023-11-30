@@ -5,24 +5,19 @@ const validatorMiddleware = require('../middlewares/validator-middleware');
 const paginationMiddleware = require('../middlewares/pagination-middleware');
 const { param } = require('express-validator');
 const auth = require('../middlewares/auth');
-
 /**
- * User Model
- * @typedef {object} User
- * @property {string} user_id - User id (UUID)
- * @property {string} name - User name
- * @property {string} email - User email
- * @property {string} password - User password
- * @property {string} bio - User bio
- * @property {string} hair_color - User hair_color
- * @property {string} favorite_food - User favorite_food
+ * Tutorial Model
+ * @typedef {object} Tutorial
+ * @property {string} tutorial_id - Tutorial id (UUID)
+ * @property {string} name - Tutorial name
+ * @property {string} link - Tutorial link
  */
 
 /**
- * @typedef {object} GetUserList
+ * @typedef {object} GetTutorialList
  * @property {boolean} status - Service status
  * @property {number} count - Total user count
- * @property {array<User>} count - User list
+ * @property {array<Tutorial>} count - Tutorial list
  */
 
 /**
