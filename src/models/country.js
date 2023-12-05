@@ -1,8 +1,8 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../utils/sequelize-client');
 
-const Job = sequelize.define(
-  'job',
+const Country = sequelize.define(
+  'country',
   {
     id: {
       allowNull: false,
@@ -10,7 +10,7 @@ const Job = sequelize.define(
       autoIncrement: true,
       type: DataTypes.BIGINT,
     },
-    job_id: {
+    country_id: {
       allowNull: false,
       primaryKey: true,
       type: DataTypes.UUID,
@@ -18,27 +18,10 @@ const Job = sequelize.define(
     },
     name: {
       allowNull: false,
-      type: DataTypes.STRING(30),
+      type: DataTypes.STRING(255),
     },
-    job_field_id: {
-        allowNull: false,
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-    },
-    job_type_ids: {
-        allowNull: false,
-        type: DataTypes.ARRAY
-    },
-    company: {
-        allowNull: true,
-        type: DataTypes.STRING(30),
-    },
-    description: {
+    code: {
       allowNull: false,
-      type: DataTypes.STRING(50),
-    },
-    location: {
-      allowNull: true,
       type: DataTypes.STRING(255),
     },
     status: {
@@ -80,8 +63,8 @@ const Job = sequelize.define(
     freezeTableName: true,
 
     // define the table's name
-    tableName: 'job',
+    tableName: 'country',
   }
 );
 
-module.exports = { Job };
+module.exports = { Country };

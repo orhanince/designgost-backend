@@ -1,10 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const designCategoryService = require('../services/design-category.service');
-const validatorMiddleware = require('../middlewares/validator-middleware');
+const newsletterService = require('../services/newsletter.service');
 const paginationMiddleware = require('../middlewares/pagination-middleware');
-const { param } = require('express-validator');
-const auth = require('../middlewares/auth');
 
 /**
  * Country Model
@@ -23,7 +20,7 @@ const auth = require('../middlewares/auth');
 
 router.get('/', paginationMiddleware(), async (req, res, next) => {
   try {
-    const result = await designCategoryService.getAll(req);
+    const result = await newsletterService.getAll(req);
     res.status(200).json(result);
   } catch (e) {
     // this line is require for global error handling.

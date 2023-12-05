@@ -1,8 +1,8 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../utils/sequelize-client');
 
-const Tutorial = sequelize.define(
-  'tutorial',
+const Newsletter = sequelize.define(
+  'newsletter',
   {
     id: {
       allowNull: false,
@@ -10,46 +10,27 @@ const Tutorial = sequelize.define(
       autoIncrement: true,
       type: DataTypes.BIGINT,
     },
-    tutorial_id: {
+    newsletter_id: {
       allowNull: false,
       primaryKey: true,
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
     },
-    design_category_id: {
+    first_name: {
       allowNull: true,
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-    },
-    name: {
-      allowNull: false,
       type: DataTypes.STRING(255),
     },
-    slug: {
-      allowNull: false,
+    last_name: {
+      allowNull: true,
       type: DataTypes.STRING(255),
     },
-    description: {
+    email: {
+       allowNull: false,
+       type: DataTypes.STRING(255),
+    },
+    interests: {
       allowNull: true,
-      type: DataTypes.TEXT
-    },
-    embed: {
-        allowNull: true,
-        type: DataTypes.TEXT,
-    },
-    duration: {
-        allowNull: true,
-        type: DataTypes.INTEGER,
-    },
-    is_published: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
-    },
-    is_featured: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
+      type: DataTypes.TEXT,
     },
     status: {
       type: DataTypes.BOOLEAN,
@@ -57,11 +38,6 @@ const Tutorial = sequelize.define(
       defaultValue: false,
     },
     created_at: {
-      allowNull: false,
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-    },
-    published_at: {
       allowNull: false,
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
@@ -95,8 +71,8 @@ const Tutorial = sequelize.define(
     freezeTableName: true,
 
     // define the table's name
-    tableName: 'tutorial',
+    tableName: 'newsletter',
   }
 );
 
-module.exports = { Tutorial };
+module.exports = { Newsletter };

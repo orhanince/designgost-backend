@@ -20,23 +20,9 @@ const DesignCategory = sequelize.define(
       allowNull: false,
       type: DataTypes.STRING(255),
     },
-    slug: {
-      allowNull: false,
-      type: DataTypes.STRING(255),
-    },
-    language: {
-      allowNull: false,
+    short_code: {
+      allowNull: true,
       type: DataTypes.STRING,
-      defaultValue: 'tr'
-    },
-    position: {
-      allowNull: true, 
-      type: DataTypes.INTEGER,
-    },
-    is_published: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
     },
     status: {
       type: DataTypes.BOOLEAN,

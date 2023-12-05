@@ -1,10 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const userService = require('./../services/user.service');
+const tutorialService = require('./../services/tutorial.service');
 const validatorMiddleware = require('../middlewares/validator-middleware');
 const paginationMiddleware = require('../middlewares/pagination-middleware');
 const { param } = require('express-validator');
-const auth = require('../middlewares/auth');
 /**
  * Tutorial Model
  * @typedef {object} Tutorial
@@ -21,15 +20,22 @@ const auth = require('../middlewares/auth');
  */
 
 /**
- * GET /user/
- * @summary Get all users.
- * @tags User
- * @security bearerAuth
- * @return {GetUserList} 200 - success response - application/json
+ * @typedef {object} GetTutorialResponse
+ * @property {boolean} status - Service status
+ * @property {number} data - Tutorial data
  */
-router.get('/', ...auth(), paginationMiddleware(), async (req, res, next) => {
+
+
+
+/**
+ * GET /
+ * @summary Get all tutorials.
+ * @tags User
+ * @return {GetTutorialList} 200 - success response - application/json
+ */
+router.get('/', paginationMiddleware(), async (req, res, next) => {
   try {
-    const result = await userService.getAll(req);
+    const result = await tutorialService.getAll(req);
     res.status(200).json(result);
   } catch (e) {
     // this line is require for global error handling.
@@ -38,19 +44,16 @@ router.get('/', ...auth(), paginationMiddleware(), async (req, res, next) => {
 });
 
 /**
- * GET /user/{user_id}
- * @summary Get user by id.
- * @tags User
- * @security bearerAuth
- * @return {GetTodoList} 200 - success response - application/json
+ * POST /tutorial/
+ * @summary Add new tutorial
+ * @tags Podcast
+ * @return {CreateTutorialResponse} 200 - success response - application/json
  */
-router.get(
-  '/:user_id',
-  ...auth(),
-  paginationMiddleware(),
+router.post(
+  '/',
   async (req, res, next) => {
     try {
-      const result = await userService.getUser({ user_id: req.AUTH.user_id });
+      const result = await tutorialService.create(req);
       res.status(200).json(result);
     } catch (e) {
       // this line is require for global error handling.
@@ -60,25 +63,123 @@ router.get(
 );
 
 /**
- * @typedef {object} UpdateUserResponse
+ * GET /{tutorial_id}
+ * @summary Get tutorial by id.
+ * @tags Tutorial
+ * @param {string} tutorial_id.path - Tutorial id.
+ * @return {GetTutorialResponse} 200 - success response - application/json
+ */
+router.get(
+  '/:tutorial_id',
+  validatorMiddleware(param('tutorial_id').isUUID('4')),
+  async (req, res, next) => {
+    try {
+      const result = await tutorialService.getTutorial(req);
+      res.status(200).json(result);
+    } catch (e) {
+      // this line is require for global error handling.
+      next(e);
+    }
+  }
+);
+
+/**
+ * @typedef {object} UpdateTutorialResponse
+ * @property {boolean} status - Service status
+ */
+
+
+/**
+ * PUT /{tutorial_id}
+ * @summary Update tutorial.
+ * @tags Tutorial
+ * @param {string} tutorial_id.path - Tutorial id.
+ * @return {UpdateTutorialResponse} 200 - success response - application/json
+ */
+router.put(
+  '/:tutorial_id',
+  validatorMiddleware(param('tutorial_id').isUUID('4')),
+  async (req, res, next) => {
+    try {
+      const result = await tutorialService.update(req);
+      res.status(200).json(result);
+    } catch (e) {
+      // this line is require for global error handling.
+      next(e);
+    }
+  }
+);
+
+/**
+ * @typedef {object} SetFeaturedResponse
  * @property {string} status - true
  */
 
 /**
- * PUT /user/{user_id}
- * @summary Update user.
- * @tags User
- * @param {string} user_id.path - user id.
- * @return {UpdateUserResponse} 200 - success response - application/json
- * @security bearerAuth
+ * PUT /featured/{tutorial_id}
+ * @summary Publish tutorial.
+ * @tags Tutorial
+ * @param {string} tutorial_id.path - Tutorial id.
+ * @return {SetFeaturedResponse} 200 - success response - application/json
  */
 router.put(
-  '/:user_id',
-  ...auth(),
-  validatorMiddleware(param('user_id').isUUID('4')),
+  '/featured/:tutorial_id',
+  validatorMiddleware(param('tutorial_id').isUUID('4')),
   async (req, res, next) => {
     try {
-      const result = await userService.updateUser(req);
+      const result = await tutorialService.setFeatured(req);
+      res.status(200).json(result);
+    } catch (e) {
+      // this line is require for global error handling.
+      next(e);
+    }
+  }
+);
+
+/**
+ * @typedef {object} PublishTutorialResponse
+ * @property {boolean} status - Service status
+ */
+
+/**
+ * PUT /publish/{tutorial_id}
+ * @summary Publish tutorial.
+ * @tags Tutorial
+ * @param {string} tutorial_id.path - Tutorial id.
+ * @return {PublishTutorialResponse} 200 - success response - application/json
+ */
+router.put(
+  '/publish/:tutorial_id',
+  validatorMiddleware(param('tutorial_id').isUUID('4')),
+  async (req, res, next) => {
+    try {
+      const result = await tutorialService.publish(req);
+      res.status(200).json(result);
+    } catch (e) {
+      // this line is require for global error handling.
+      next(e);
+    }
+  }
+);
+
+/**
+ * @typedef {object} DeleteTutorialResponse
+ * @property {boolean} status - Service status
+ */
+
+/**
+ * DELETE /{tutorial_id}
+ * @summary Delete tutorial.
+ * @tags Tutorial
+ * @param {string} tutorial_id.path - Tutorial id.
+ * @return {DeleteTutorialResponse} 200 - success response - application/json
+ */
+router.delete(
+  '/:tutorial_id',
+  validatorMiddleware(param('tutorial_id').isUUID('4')),
+  async (req, res, next) => {
+    try {
+      const result = await tutorialService.deleteTutorial(req);
       res.status(200).json(result);
     } catch (e) {
       // this line is require for global error handling.

@@ -1,11 +1,14 @@
 const _ = require('lodash');
-const { User } = require('../models');
+const { Career, WorkType } = require('../models');
+const { Profession } = require('../models');
 const GenericError = require('../utils/generic-error');
 const { v4: uuidv4 } = require('uuid');
 const moment = require('moment-timezone');
 const cryptoService = require('./crypto.service');
 const jwt = require('../utils/jwt');
 const paginationOptionGenerator = require('../utils/pagination-option-generator');
+const sequelizeClient = require('./../utils/sequelize-client');
+const { default: slugify } = require('slugify');
 /**
  * Get all users
  * @param pagination
@@ -21,11 +24,11 @@ async function getAll({ pagination }) {
     },
   });
 
-  const count = await User.count({
+  const count = await Career.count({
     where: options.where,
   });
 
-  const data = await User.findAll({
+  const data = await Career.findAll({
     attributes: ['user_id', 'name', 'surname', 'username', 'email'],
     options,
   });
@@ -37,6 +40,52 @@ async function getAll({ pagination }) {
   };
 }
 
+async function getByID() {
+  return {
+    status: true,
+    data: 1
+  };
+}
+
+
+
+async function getOldAll() {
+  const careers = await sequelizeClient.query('SELECT * FROM careers');
+  for await (const c of careers[0]) {
+    const workTypes = await WorkType.findAll();
+    //console.log('workTypes', workTypes);
+    const worktypes = JSON.parse(c.worktypes);
+    console.log('worktypes => ', worktypes);
+    
+    const now = moment.utc().toISOString();
+     const slugBig = c.title;
+     const slug = slugBig.toLowerCase();
+     const createCareer = await Career.create({
+     career_id: uuidv4(),
+     name: c.title,
+     slug: slugify(slug, '-'),
+     work_type: c.worktypes,
+     company: c.corporate,
+     company_website: c.website,
+     location: c.location,
+     color: c.color,
+     email_apply: c.applytype === 10 ? 1 : 0,
+     apply_email: c.applyemail,
+     description: c.description === null ? 'empty' : c.description,
+     status: 1,
+     is_published: c.published,
+     created_at: now,
+     updated_at: now,
+     });
+     console.log('createCareer', createCareer);
+   }
+  return {
+    status: true,
+    data: 1
+  };
+  
+}
+
 /**
  * Add new job.
  * @param {string} name
@@ -46,7 +95,7 @@ async function getAll({ pagination }) {
  * @returns {Promise<{status: boolean, token: (*)}>}
  */
 async function createUser({ name, email, password }) {
-  const foundUser = await User.count({
+  const foundUser = await Career.count({
     where: {
       email: email,
     },
@@ -57,7 +106,7 @@ async function createUser({ name, email, password }) {
   }
 
   const now = moment.utc().toISOString();
-  const createUser = await User.create({
+  const createUser = await Career.create({
     user_id: uuidv4(),
     name: name,
     email: email,
@@ -111,7 +160,7 @@ async function getUser({ user_id, email }) {
  */
 async function updateUser({ body, AUTH }) {
   const { bio, hair_color, favorite_food } = body;
-  const foundUser = await User.count({
+  const foundUser = await Career.count({
     where: {
       user_id: AUTH.user_id,
     },
@@ -122,7 +171,7 @@ async function updateUser({ body, AUTH }) {
   }
 
   const now = moment.utc().toISOString();
-  const [updateUser] = await User.update(
+  const [updateUser] = await Career.update(
     {
       bio: bio,
       hair_color: hair_color,
@@ -159,7 +208,7 @@ async function createUserToken({ user_id, email }) {
     filter.email = email;
   }
 
-  return User.findOne(filter);
+  return Career.findOne(filter);
 }
 
 async function revokeRequestToken() {}
@@ -170,5 +219,7 @@ module.exports = {
   createUserToken,
   updateUser,
   getAll,
+  getOldAll,
+  getByID,
   revokeRequestToken,
 };

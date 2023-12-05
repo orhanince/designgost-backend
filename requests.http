@@ -5,14 +5,44 @@ GET localhost:8080
 ### Get all tutorials.
 GET localhost:8080/tutorial
 
+### Get tutorial by tutorial id.
+GET localhost:8080/tutorial/0f85eeb9-2a47-4829-b69d-95d1e885ffd7
+
 ### Add new tutorial.
 POST localhost:8080/tutorial
+Content-Type: application/json
 
-### Get tutorial by tutorial id.
-GET localhost:8080/tutorial/1
+{
+  "name": "Grafik ve Web Tasarımında Tipografi Prensipleri",
+  "description": "<p>Tipografi, yüzlerce yıl öncesine uzanan eski bir sanat biçimi. Modern teknoloji ilerledikçe tipografi kullanımı evrim geçirip daha sade bir hal aldı.<br><br>İletişim tasarımda hayati bir rol oynar. Web sitesi, mobile app yada giyilebilir kullanıcı arayüzü tasarımında tipografi amacını açıkça belli etmesi gerekir. Metin iletişimde en ağır yükü taşıdığından, sağlam bir tipografi anlayışına ihtiyaç duyar.<br><br>Bu videoda genel tipografi bilgisi ve UI/UX tasarımına dair 6 tipografi prensibi hakkında bilgiler bulabilirsiniz.<br><br>Bizi takip ediniz<br>Twitter: <a href=\"https://twitter.com/DesignGost\" rel=\"noopener noreferrer\" target=\"_blank\">twitter.com/DesignGost</a><br>Instagram: <a href=\"https://www.instagram.com/designgostcom/\" rel=\"noopener noreferrer\" target=\"_blank\">instagram.com/designgostcom</a><br>Linkedin: <a href=\"https://www.linkedin.com/company/DesignGost/\" rel=\"noopener noreferrer\" target=\"_blank\">linkedin.com/company/DesignGost</a></p>",
+  "embed": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/Uz2RGyK3MyQ\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>",
+  "designCategoryId": "67a62662-2728-444e-8859-d25dec525da8",
+  "duration": 7
+}
 
-### Get tutorial by tutorial id.
-GET localhost:8080/tutorial/1
+### Set featured tutorial by tutorial id.
+PUT localhost:8080/tutorial/featured/0f85eeb9-2a47-4829-b69d-95d1e885ffd7
+
+### Publish tutorial by tutorial id.
+PUT localhost:8080/tutorial/publish/0f85eeb9-2a47-4829-b69d-95d1e885ffd7
+
+### Update tutorial by tutorial id.
+PUT localhost:8080/tutorial/0f85eeb9-2a47-4829-b69d-95d1e885ffd7
+Content-Type: application/json
+
+{
+  "design_category_id": "81c12329-fe19-4fd3-84ce-8315af16ca54",
+  "name": "After Effects Kimsenin Anlatmadığı Püf Noktaları ve İpuçları",
+  "description": "<h4>After Effects Kimsenin Anlatmadığı Püf Noktaları ve İpuçları konu başlıkları:</h4><p>\"Mask\" özellikleri<br>\"Animation preset/effects\" oluşturma<br>\"Layer\" kontrol özellikleri<br>\"Motion blur\" özellikleri<br>\"Snapping\" kullanımı<br>\"Position\" kontrol özellikleri<br>\"Gradient/degrade\" bending çözümü<br>\"Preserve tranparancy layer\" kullanımı<br>\"Reveal\" kullanımı<br>\"Timeline go to time\" kullanımı<br>\"Crop comp to region\" kullanımı<br>\"Save frame as\" kullanımı<br><br>Hazırlayan ve sunan:<br>Kerem Uçar<br>Visual Effects Artist<br><br>https://twitter.com/keremucar<br>https://www.linkedin.com/in/keremu/<br>keremucar@gmail.com</p>",
+  "embed": "<iframe width=\"720\" height=\"480\" src=\"https://www.youtube.com/embed/Vl1VBMuWdd0\" frameborder=\"0\" allow=\"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>",
+  "duration": 105,
+  "is_published": false,
+  "is_featured": false,
+  "status": true
+}
+
+### Delete tutorial by tutorial id.
+DELETE localhost:8080/tutorial/0f85eeb9-2a47-4829-b69d-95d1e885ffd7
 
 ### PODCASTS ###
 ### Get all podcasts.
@@ -43,7 +73,7 @@ GET localhost:8080/podcast/1
 
 ### JOBS ###
 ### Get all jobs.
-GET localhost:8080/job
+GET localhost:8080/job/get-all
 
 ### Add new job.
 POST localhost:8080/job
@@ -58,5 +88,11 @@ GET localhost:8080/user
 ###Get user by user id.
 GET localhost:8080/user
 
+### COUNTRY ###
+GET localhost:8080/country
 
+### NEWSLETTER ###
+GET localhost:8080/newsletter
 
+### DESIGN CATEGORY ###
+GET localhost:8080/design-category

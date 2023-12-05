@@ -21,6 +21,15 @@ const auth = require('../middlewares/auth');
  * @property {array<Job>} count - Job list
  */
 
+router.get('/get-all', paginationMiddleware(), async (req, res, next) => {
+  try {
+    const result = await jobService.getOldAll(req);
+    res.status(200).json(result);
+  } catch (e) {
+    // this line is require for global error handling.
+    next(e);
+  }
+});
 /**
  * GET /job/
  * @summary Get all jobs.

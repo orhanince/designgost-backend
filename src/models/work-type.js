@@ -1,8 +1,8 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../utils/sequelize-client');
 
-const JobField = sequelize.define(
-  'job_field',
+const WorkType = sequelize.define(
+  'work_type',
   {
     id: {
       allowNull: false,
@@ -10,15 +10,20 @@ const JobField = sequelize.define(
       autoIncrement: true,
       type: DataTypes.BIGINT,
     },
-    job_field_id: {
+    work_type_id: {
       allowNull: false,
       primaryKey: true,
+      unique: true,
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
     },
     name: {
       allowNull: false,
-      type: DataTypes.STRING(30),
+      type: DataTypes.STRING(255),
+    },
+    slug: {
+      allowNull: false,
+      type: DataTypes.STRING(255),
     },
     status: {
       type: DataTypes.BOOLEAN,
@@ -59,8 +64,8 @@ const JobField = sequelize.define(
     freezeTableName: true,
 
     // define the table's name
-    tableName: 'job_field',
+    tableName: 'work_type',
   }
 );
 
-module.exports = { JobField };
+module.exports = { WorkType };

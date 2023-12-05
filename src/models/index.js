@@ -17,12 +17,24 @@ const { Podcast } = require('./podcast.js');
 const { Translation } = require('./translation.js');
 const { Slug } = require('./slug.js');
 const { DesignCategory } = require('./design-category.js');
+const { Career } = require('./career.js');
+const { WorkType } = require('./work-type.js');
+const { Profession } = require('./profession.js');
+const { Country } = require('./country.js');
+const { Newsletter } = require('./newsletter.js');
+const { Tutorial } = require('./tutorial.js');
 
 module.exports = {
+  Career,
+  WorkType,
+  Profession,
   RequestToken,
   User,
   Podcast,
   Slug,
   Translation,
-  DesignCategory
+  DesignCategory,
+  Country,
+  Newsletter,
+  Tutorial
 };

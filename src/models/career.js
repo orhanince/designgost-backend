@@ -1,8 +1,8 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../utils/sequelize-client');
 
-const JobType = sequelize.define(
-  'job_type',
+const Career = sequelize.define(
+  'career',
   {
     id: {
       allowNull: false,
@@ -10,7 +10,7 @@ const JobType = sequelize.define(
       autoIncrement: true,
       type: DataTypes.BIGINT,
     },
-    job_type_id: {
+    career_id: {
       allowNull: false,
       primaryKey: true,
       type: DataTypes.UUID,
@@ -18,7 +18,63 @@ const JobType = sequelize.define(
     },
     name: {
       allowNull: false,
-      type: DataTypes.STRING(30),
+      type: DataTypes.STRING(255),
+    },
+    slug: {
+      allowNull: false,
+      type: DataTypes.STRING(255),
+    },
+    work_type: {
+      allowNull: true,
+      type: DataTypes.TEXT
+    },
+    profession_id: {
+      allowNull: false,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+    },
+    description: {
+      allowNull: false,
+      type: DataTypes.TEXT,
+    },
+    company: {
+      allowNull: true,
+      type: DataTypes.STRING(255),
+    },
+    company_website: {
+        allowNull: true,
+        type: DataTypes.STRING(255),
+    },
+    location: {
+        allowNull: true,
+        type: DataTypes.STRING(255),
+    },
+    email_apply: {
+      allowNull: false,
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
+    },
+    apply_email: {
+      allowNull: true,
+      type: DataTypes.STRING(255)
+    },
+    apply_link: {
+      allowNull: true,
+      type: DataTypes.TEXT
+    },
+    color: {
+      allowNull: true,
+      type: DataTypes.STRING
+    },
+    is_published: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+    is_featured: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
     status: {
       type: DataTypes.BOOLEAN,
@@ -29,6 +85,11 @@ const JobType = sequelize.define(
       allowNull: false,
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
+    },
+    published_at: {
+        allowNull: false,
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
     },
     updated_at: {
       allowNull: true,
@@ -59,8 +120,8 @@ const JobType = sequelize.define(
     freezeTableName: true,
 
     // define the table's name
-    tableName: 'job_type',
+    tableName: 'career',
   }
 );
 
-module.exports = { JobType };
+module.exports = { Career };

@@ -1,32 +1,30 @@
-const _ = require('lodash');
-const { User } = require('./../models');
+const { Tutorial } = require('./../models');
 const GenericError = require('../utils/generic-error');
 const { v4: uuidv4 } = require('uuid');
 const moment = require('moment-timezone');
-const cryptoService = require('./crypto.service');
-const jwt = require('./../utils/jwt');
 const paginationOptionGenerator = require('../utils/pagination-option-generator');
+const { default: slugify } = require('slugify');
+
 /**
- * Get all users
+ * Get all tutorials
  * @param pagination
- * @param AUTH
  * @returns {Promise<{data: Promise<Model[]> | Promise<any[]>, count: *, status: boolean}>}
  */
 async function getAll({ pagination }) {
   const options = paginationOptionGenerator({
     pagination,
-    likeColumns: ['id', 'user_id'],
+    likeColumns: ['id', 'tutorial_id'],
     where: {
       status: true,
     },
   });
 
-  const count = await User.count({
+  const count = await Tutorial.count({
     where: options.where,
   });
 
-  const data = await User.findAll({
-    attributes: ['user_id', 'name', 'surname', 'username', 'email'],
+  const data = await Tutorial.findAll({
+    attributes: ['tutorial_id', 'design_category_id','name', 'slug','description','duration','embed', 'is_published', 'is_featured', 'status', 'created_at'],
     options,
   });
 
@@ -36,139 +34,227 @@ async function getAll({ pagination }) {
     data,
   };
 }
-
 /**
- * Create new user
+ * Add new tutorial.
  * @param {string} name
  * @param {string} surname
  * @param {string} email
  * @param {string} password
  * @returns {Promise<{status: boolean, token: (*)}>}
  */
-async function createUser({ name, email, password }) {
-  const foundUser = await User.count({
+async function create({ body }) {
+  const { name, embed, description, designCategoryId, duration } = body || {};
+  
+  const foundTutorial = await Tutorial.count({
     where: {
-      email: email,
+      slug: slugify(name.toLowerCase(),'-'),
     },
   });
 
-  if (foundUser) {
-    throw new GenericError(400, '', `User already exists!`, foundUser);
+  if (!foundTutorial) {
+    throw new GenericError(400, '', `Tutorial already exists!`, foundTutorial);
   }
 
   const now = moment.utc().toISOString();
-  const createUser = await User.create({
-    user_id: uuidv4(),
+  const createTutorial = await Tutorial.create({
+    tutorial_id: uuidv4(),
+    design_category_id: designCategoryId,
     name: name,
-    email: email,
-    password: cryptoService.hashPassword(password),
-    is_email_verified: false,
-    email_verification_code: uuidv4(),
+    slug: slugify(name.toLowerCase(),'-'),
+    description: description,
+    embed: embed,
+    duration: duration,
     status: 1,
     created_at: now,
     updated_at: now,
   });
 
-  if (createUser) {
+  if (createTutorial) {
     return {
       status: true,
-      token: jwt.createJwtToken({
-        user_id: JSON.parse(JSON.stringify(createUser)).user_id,
-        name: JSON.parse(JSON.stringify(createUser)).user_id.name,
-        email: JSON.parse(JSON.stringify(createUser)).email,
-        bio: JSON.parse(JSON.stringify(createUser)).bio,
-        hair_color: JSON.parse(JSON.stringify(createUser)).hair_color,
-        favorite_food: JSON.parse(JSON.stringify(createUser)).favorite_food,
-      }),
+      data: createTutorial
     };
   }
 }
 
 /**
- * Get single user form database.
+ * Get single tutorial by id.
  * @param req
  * @returns {Promise<any>}
  */
-async function getUser({ user_id, email }) {
-  const filter = {
+async function getTutorial({ params }) {
+  const { tutorial_id } = params || {}
+  return await Tutorial.findOne({
     where: {
-      status: true,
-      deleted_at: null,
-    },
-  };
-  if (!_.isEmpty(user_id)) {
-    filter.where.user_id = user_id;
-  } else if (!_.isEmpty(email)) {
-    filter.where.email = email;
-  }
-  return User.findOne(filter);
+      tutorial_id: tutorial_id
+    }
+  });
 }
 
 /**
- * Update single user form database.
+ * Publish tutorial by id.
  * @param req
  * @returns {Promise<any>}
  */
-async function updateUser({ body, AUTH }) {
-  const { bio, hair_color, favorite_food } = body;
-  const foundUser = await User.count({
+async function publish({ params }) {
+  const { tutorial_id } = params || {}
+  const foundTutorial = await Tutorial.findOne({
     where: {
-      user_id: AUTH.user_id,
-    },
+      tutorial_id: tutorial_id
+    }
   });
 
-  if (!foundUser) {
-    throw new GenericError(400, '', `User not exists!`, foundUser);
+  if (!foundTutorial) {
+    throw new GenericError(400, '', `Tutorial does not exist!`, foundTutorial);
   }
 
   const now = moment.utc().toISOString();
-  const [updateUser] = await User.update(
+  const [publishTutorial] = await Tutorial.update(
     {
-      bio: bio,
-      hair_color: hair_color,
-      favorite_food: favorite_food,
+      is_published: true,
+      published_at: now,
       updated_at: now,
     },
     {
       where: {
-        user_id: AUTH.user_id,
+        tutorial_id: tutorial_id,
       },
     }
   );
+
   return {
     status: true,
-    data: updateUser,
+    data: publishTutorial
   };
 }
 
 /**
- * Create user token.
- * @param {string} user_id
- * @param {string} email
- * @returns {Promise<*>}
+ * Set featured tutorial by id.
+ * @param req
+ * @returns {Promise<any>}
  */
-async function createUserToken({ user_id, email }) {
-  const filter = {
-    status: true,
-    deleted_at: null,
-  };
+async function setFeatured({ params }) {
+  const { tutorial_id } = params || {}
+  const foundTutorial = await Tutorial.findOne({
+    where: {
+      tutorial_id: tutorial_id
+    }
+  });
 
-  if (!_.isEmpty(user_id)) {
-    filter.user_id = user_id;
-  } else if (!_.isEmpty(email)) {
-    filter.email = email;
+  if (!foundTutorial) {
+    throw new GenericError(400, '', `Tutorial does not exist!`, foundTutorial);
   }
 
-  return User.findOne(filter);
+  const now = moment.utc().toISOString();
+  const [setFeaturedTutorial] = await Tutorial.update(
+    {
+      is_featured: true,
+      published_at: now,
+      updated_at: now,
+    },
+    {
+      where: {
+        tutorial_id: tutorial_id,
+      },
+    }
+  );
+
+  return {
+    status: true,
+    data: setFeaturedTutorial
+  };
 }
 
-async function revokeRequestToken() {}
+/**
+ * Update tutorial by id.
+ * @param req
+ * @returns {Promise<any>}
+ */
+async function update({ params, body }) {
+  const { tutorial_id } = params || {};
+  const { design_category_id, name, description, embed, duration, is_published, is_featured, status } = body || {};
+  
+  const foundTutorial = await Tutorial.findOne({
+    where: {
+      tutorial_id: tutorial_id
+    }
+  });
+
+  if (!foundTutorial) {
+    throw new GenericError(400, '', `Tutorial does not exist!`, foundTutorial);
+  }
+
+  const now = moment.utc().toISOString();
+  const [updateTutorial] = await Tutorial.update(
+    {
+      design_category_id:  design_category_id,
+      name: name,
+      slug: slugify(name.toLowerCase(),'-'),
+      description: description,
+      embed: embed,
+      duration: duration,
+      is_published: is_published,
+      is_featured: is_featured,
+      status: status,
+      updated_at: now,
+    },
+    {
+      where: {
+        tutorial_id: tutorial_id,
+      }
+    }
+  );
+
+  return {
+    status: true,
+    data: updateTutorial
+  };
+}
+
+/**
+ * Delete tutorial by id.
+ * @param req
+ * @returns {Promise<any>}
+ */
+async function deleteTutorial({ params }) {
+  const { tutorial_id } = params || {};
+
+  const foundTutorial = await Tutorial.findOne({
+    where: {
+      tutorial_id: tutorial_id
+    }
+  });
+
+  if (!foundTutorial) {
+    throw new GenericError(400, '', `Tutorial does not exist!`, foundTutorial);
+  }
+
+  const now = moment.utc().toISOString();
+  const deleteTutorial = await Tutorial.update(
+    {
+      status: false,
+      updated_at: now,
+      deleted_at: now,
+    },
+    {
+      where: {
+        tutorial_id: tutorial_id,
+      }
+    }
+  );
+
+  return {
+    status: true,
+    data: deleteTutorial
+  };
+}
 
 module.exports = {
-  createUser,
-  getUser,
-  createUserToken,
-  updateUser,
   getAll,
-  revokeRequestToken,
+  getTutorial,
+  create,
+  setFeatured,
+  publish,
+  update,
+  deleteTutorial
 };

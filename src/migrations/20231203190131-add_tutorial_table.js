@@ -2,16 +2,21 @@
 
 module.exports = {
   async up(queryInterface, DataTypes) {
-    await queryInterface.createTable('design_category', {
+    await queryInterface.createTable('tutorial', {
       id: {
         allowNull: false,
         primaryKey: true,
         autoIncrement: true,
         type: DataTypes.BIGINT,
       },
-      design_category_id: {
+      tutorial_id: {
         allowNull: false,
         primaryKey: true,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
+      design_category_id: {
+        allowNull: true,
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
       },
@@ -19,9 +24,31 @@ module.exports = {
         allowNull: false,
         type: DataTypes.STRING(255),
       },
-      short_code: {
+      slug: {
+        allowNull: false,
+        type: DataTypes.STRING(255),
+      },
+      description: {
         allowNull: true,
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT
+      },
+      embed: {
+          allowNull: true,
+          type: DataTypes.TEXT,
+      },
+      duration: {
+        allowNull: true,
+        type: DataTypes.INTEGER,
+      },
+      is_published: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
+      },
+      is_featured: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
       },
       status: {
         type: DataTypes.BOOLEAN,
@@ -29,6 +56,11 @@ module.exports = {
         defaultValue: false,
       },
       created_at: {
+        allowNull: false,
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
+      published_at: {
         allowNull: false,
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
@@ -52,6 +84,6 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
-    await queryInterface.dropTable('design_category');
+    await queryInterface.dropTable('tutorial');
   },
 };

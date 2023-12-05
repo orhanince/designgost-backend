@@ -2,14 +2,14 @@
 
 module.exports = {
   async up(queryInterface, DataTypes) {
-    await queryInterface.createTable('design_category', {
+    await queryInterface.createTable('country', {
       id: {
         allowNull: false,
         primaryKey: true,
         autoIncrement: true,
         type: DataTypes.BIGINT,
       },
-      design_category_id: {
+      country_id: {
         allowNull: false,
         primaryKey: true,
         type: DataTypes.UUID,
@@ -19,9 +19,9 @@ module.exports = {
         allowNull: false,
         type: DataTypes.STRING(255),
       },
-      short_code: {
-        allowNull: true,
-        type: DataTypes.STRING,
+      code: {
+        allowNull: false,
+        type: DataTypes.STRING(255),
       },
       status: {
         type: DataTypes.BOOLEAN,
@@ -52,6 +52,6 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
-    await queryInterface.dropTable('design_category');
+    await queryInterface.dropTable('country');
   },
 };

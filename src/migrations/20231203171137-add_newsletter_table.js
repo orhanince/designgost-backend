@@ -2,26 +2,34 @@
 
 module.exports = {
   async up(queryInterface, DataTypes) {
-    await queryInterface.createTable('design_category', {
+    await queryInterface.createTable('newsletter', {
       id: {
         allowNull: false,
         primaryKey: true,
         autoIncrement: true,
         type: DataTypes.BIGINT,
       },
-      design_category_id: {
+      newsletter_id: {
         allowNull: false,
         primaryKey: true,
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
       },
-      name: {
-        allowNull: false,
+      first_name: {
+        allowNull: true,
         type: DataTypes.STRING(255),
       },
-      short_code: {
+      last_name: {
         allowNull: true,
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(255),
+      },
+      email: {
+         allowNull: false,
+         type: DataTypes.STRING(255),
+      },
+      interests: {
+        allowNull: true,
+        type: DataTypes.TEXT,
       },
       status: {
         type: DataTypes.BOOLEAN,
@@ -52,6 +60,6 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
-    await queryInterface.dropTable('design_category');
+    await queryInterface.dropTable('newsletter');
   },
 };
