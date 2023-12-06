@@ -24,28 +24,39 @@ const Podcast = sequelize.define(
       allowNull: false,
       type: DataTypes.STRING(255),
     },
-    languages: {
-      allowNull: false,
-      type: DataTypes.STRING,
-      defaultValue: 'tr'
-    },
-    person_name: {
-      allowNull: true,
-      type: DataTypes.STRING,
-    },
-    iframe: {
+    description: {
       allowNull: true,
       type: DataTypes.TEXT
     },
+    person: {
+      allowNull: true,
+      type: DataTypes.STRING(255),
+    },
+    person_career: {
+      allowNull: true,
+      type: DataTypes.STRING(255),
+    },
+    embed: {
+       allowNull: true,
+       type: DataTypes.TEXT,
+    },
+    spotify_embed: {
+      allowNull: true,
+      type: DataTypes.TEXT,
+  },
+    duration: {
+        allowNull: true,
+        type: DataTypes.INTEGER,
+    },
     is_published: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
     },
     is_featured: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
     },
     status: {
       type: DataTypes.BOOLEAN,
@@ -53,6 +64,11 @@ const Podcast = sequelize.define(
       defaultValue: false,
     },
     created_at: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
+    published_at: {
       allowNull: false,
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,

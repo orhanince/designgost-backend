@@ -53,10 +53,13 @@ POST localhost:8080/podcast
 Content-Type: application/json
 
 {
-  "name": "Şimdi olsa RGB dövmesi yaptırırdım",
-  "language": "tr",
-  "personName": "Test User",
-  "iframe": "<iframe width='560' height='315' src='https://www.youtube.com/embed/AhEW3Pa9jAQ' title='YouTube video player' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share' allowfullscreen></iframe>"
+  "name": "Merak Duygusu Olmayan İnsan Yaratıcı Olamaz",
+  "description": "<p><strong>Mesut Uğurlu</strong><br>Creative Director / Founder<br>DesignGost / Merhaba Pazartesi<br><a href=\"http://www.mesutugurlu.com/\" rel=\"noopener noreferrer\" target=\"_blank\">http://www.mesutugurlu.com/</a></p><p>Profesyonel kariyerinde McCann Erickson İstanbul, Rafineri, Happy People Project ve Alametifarika gibi lider reklam ajanslarında çalıştı. Ulusal ve uluslararası (Cannes Festival, Effie Awards, Crystal Apple, Turkish Graphic Design Exhibition, World Packaging Organisation) festivallerde ödüller aldı. Reklamcılık ve görsel iletişim alanında uluslararası markaların yanı sıra Türkiye'nin en güçlü markalarının Sanat Yönetmenliği görevini üstlendi. Marka değişim ve gelişim süreçlerinde aktif görev aldı.</p><p>2010 yılında <strong>Seyyar Sesler</strong> isimli müzik, tasarım ve edebiyat içeriği olan bir fanzin/dergi çıkartmaya başladı.</p><p>2015 yılında İstanbul merkezli <strong>Merhaba Pazartesi</strong> İletişim ve Tasarım Ofisi'ni kurarak kendi müşterilerine hizmet vermeye başladı. Ajans bünyesinde Türkiye'de markalaşma sürecine giren ve potansiyel büyüme grafiği olan markalara iletişim danışmanlığı yaparak onlarca markanın kurumsallaşmasını sağladı. Türkiye'nin büyük markalarının lokal iletişim ve tasarım gerektiren projelerini hayata geçirdi. <br><br>2018 yılında Türkiye’de grafik tasarımcıları temsil eden <strong>GMK</strong>'da (Grafikerler Meslek Kuruluşu) yönetim kurulu üyeliği görevini üstlendi.</p><p>2020 yılında tasarım ve yaratıcılık alanında Türkiye'nin ilk ve tek online eğitim ve danışmanlık platformu olan <strong>DesignGost'</strong>un kurucu ortağı oldu.</p><p>Reklam sanat yönetmenliği, kurumsal kimlik tasarımı, marka stratejisi geliştirme, illüstrasyon ve animasyon disiplinlerinde işler üretmeye devam ediyor. Çeşitli disiplinlerden beslenerek çoklu yaratıcı ekiplerle işler üretmeyi seviyor ve bunun için yeni alanları araştırmayı sürdürüyor.</p><p><br></p>",
+  "embed": "<iframe width=\"480\" height=\"270\" src=\"//www.youtube.com/embed/GAeaDdpp-tg?autoplay=1\" frameborder=\"0\" allow=\"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>",
+  "spotify_embed": "<iframe style=\"border-radius:12px\" src=\"https://open.spotify.com/embed/episode/6YdMAJGiwUi8appnw7n02t?utm_source=generator\" width=\"100%\" height=\"352\" frameBorder=\"0\" allowfullscreen=\"\" allow=\"autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture\" loading=\"lazy\"></iframe>",
+  "duration": 105,
+  "person": "Mesut Uğurlu",
+  "person_career":  "Creative Director"
 }
 
 ### Publish the podcast.

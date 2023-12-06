@@ -1,13 +1,13 @@
-const slugify = require('slugify');
 const { Podcast } = require('./../models');
 const GenericError = require('../utils/generic-error');
 const { v4: uuidv4 } = require('uuid');
 const moment = require('moment-timezone');
 const paginationOptionGenerator = require('../utils/pagination-option-generator');
+const { default: slugify } = require('slugify');
+
 /**
- * Get all users
+ * Get all podcasts
  * @param pagination
- * @param AUTH
  * @returns {Promise<{data: Promise<Model[]> | Promise<any[]>, count: *, status: boolean}>}
  */
 async function getAll({ pagination }) {
@@ -24,6 +24,7 @@ async function getAll({ pagination }) {
   });
 
   const data = await Podcast.findAll({
+    attributes: ['podcast_id', 'name', 'slug','description','duration','embed','spotify_embed', 'person', 'person_career', 'is_published', 'is_featured', 'status', 'created_at'],
     options,
   });
 
@@ -33,31 +34,44 @@ async function getAll({ pagination }) {
     data,
   };
 }
-
 /**
- * Create new podcast
+ * Add new podcast.
  * @param {string} name
- * @param {string} language
- * @param {string} personName
- * @param {string} iframe
+ * @param {string} surname
+ * @param {string} email
+ * @param {string} password
  * @returns {Promise<{status: boolean, token: (*)}>}
  */
 async function create({ body }) {
-  const { name, language, personName, iframe } = body || {};
+  const { name, embed, description, spotify_embed, duration, person, person_career } = body || {};
+  
+  const foundPodcast = await Podcast.count({
+    where: {
+      slug: slugify(name.toLowerCase(),'-'),
+    },
+  });
+
+  if (foundPodcast) {
+    throw new GenericError(400, '', `Podcast already exists!`, foundPodcast);
+  }
+
   const now = moment.utc().toISOString();
   const createPodcast = await Podcast.create({
     podcast_id: uuidv4(),
     name: name,
-    slug: slugify(name, '_'),
-    language: language,
-    person_name: personName,
-    iframe: iframe,
+    slug: slugify(name.toLowerCase(),'-'),
+    description: description,
+    embed: embed,
+    spotify_embed: spotify_embed,
+    duration: duration,
+    person: person,
+    person_career: person_career,
     status: 1,
     created_at: now,
     updated_at: now,
   });
-  
-  if (createPodcast) {
+
+  if (spotify_embed) {
     return {
       status: true,
       data: createPodcast
@@ -66,15 +80,26 @@ async function create({ body }) {
 }
 
 /**
- * Publish the podcast.
- * @param {string} name
- * @param {string} language
- * @param {string} personName
- * @param {string} iframe
- * @returns {Promise<{status: boolean, token: (*)}>}
+ * Get single podcast by id.
+ * @param req
+ * @returns {Promise<any>}
+ */
+async function getPodcast({ params }) {
+  const { podcast_id } = params || {}
+  return await Podcast.findOne({
+    where: {
+      podcast_id: podcast_id
+    }
+  });
+}
+
+/**
+ * Publish podcast by id.
+ * @param req
+ * @returns {Promise<any>}
  */
 async function publish({ params }) {
-  const { podcast_id } = params || {};
+  const { podcast_id } = params || {}
   const foundPodcast = await Podcast.findOne({
     where: {
       podcast_id: podcast_id
@@ -82,38 +107,72 @@ async function publish({ params }) {
   });
 
   if (!foundPodcast) {
-    throw new GenericError(400, '', `Podcast not exists!`, foundPodcast);
+    throw new GenericError(400, '', `Podcast does not exist!`, foundPodcast);
   }
 
   const now = moment.utc().toISOString();
-  const publishPodcast = await Podcast.update({
-    is_published: true,
-    status: 1,
-    updated_at: now
-  }, {
+  const [publishPodcast] = await Podcast.update(
+    {
+      is_published: true,
+      published_at: now,
+      updated_at: now,
+    },
+    {
+      where: {
+        podcast_id: podcast_id,
+      },
+    }
+  );
+
+  return {
+    status: true,
+    data: publishPodcast
+  };
+}
+
+/**
+ * Publish podcast by id.
+ * @param req
+ * @returns {Promise<any>}
+ */
+async function unPublish({ params }) {
+  const { podcast_id } = params || {}
+  const foundPodcast = await Podcast.findOne({
     where: {
       podcast_id: podcast_id
     }
   });
-  
-  if (publishPodcast) {
-    return {
-      status: true,
-      data: publishPodcast
-    };
-  }
-}
 
+  if (!foundPodcast) {
+    throw new GenericError(400, '', `Podcast does not exist!`, foundPodcast);
+  }
+
+  const now = moment.utc().toISOString();
+  const [unPublishPodcast] = await Podcast.update(
+    {
+      is_published: false,
+      published_at: now,
+      updated_at: now,
+    },
+    {
+      where: {
+        podcast_id: podcast_id,
+      },
+    }
+  );
+
+  return {
+    status: true,
+    data: unPublishPodcast
+  };
+}
 /**
- * Publish the podcast.
- * @param {string} name
- * @param {string} language
- * @param {string} personName
- * @param {string} iframe
- * @returns {Promise<{status: boolean, token: (*)}>}
+ * Set featured tutorial by id.
+ * @param req
+ * @returns {Promise<any>}
  */
 async function setFeatured({ params }) {
-  const { podcast_id } = params || {};
+  const { podcast_id } = params || {}
   const foundPodcast = await Podcast.findOne({
     where: {
       podcast_id: podcast_id
@@ -121,36 +180,38 @@ async function setFeatured({ params }) {
   });
 
   if (!foundPodcast) {
-    throw new GenericError(400, '', `Podcast not exists!`, foundPodcast);
+    throw new GenericError(400, '', `Podcast does not exist!`, foundPodcast);
   }
 
   const now = moment.utc().toISOString();
-  const setFeaturedPodcast = await Podcast.update({
-    is_featured: true,
-    status: 1,
-    updated_at: now
-  }, {
-    where: {
-      podcast_id: podcast_id
+  const [setFeaturedPodcast] = await Podcast.update(
+    {
+      is_featured: true,
+      published_at: now,
+      updated_at: now,
+    },
+    {
+      where: {
+        podcast_id: podcast_id,
+      },
     }
-  });
+  );
+
+  return {
+    status: true,
+    data: setFeaturedPodcast
+  };
+}
+
+/**
+ * Update tutorial by id.
+ * @param req
+ * @returns {Promise<any>}
+ */
+async function update({ params, body }) {
+  const { podcast_id } = params || {};
+  const { name, description, person, person_career, embed, spotify_embed, duration, is_published, is_featured, status } = body || {};
   
-  if (setFeaturedPodcast) {
-    return {
-      status: true,
-      data: setFeaturedPodcast
-    };
-  }
-}
-
-/**
- * Update the podcast.
- * @param req
- * @returns {Promise<any>}
- */
-async function update({ body, params }) {
-  const { podcast_id } = params || {};
-  const { name, personName, iframe } = body || {};
   const foundPodcast = await Podcast.findOne({
     where: {
       podcast_id: podcast_id
@@ -158,38 +219,46 @@ async function update({ body, params }) {
   });
 
   if (!foundPodcast) {
-    throw new GenericError(400, '', `Podcast not exists!`, foundPodcast);
+    throw new GenericError(400, '', `Podcast does not exist!`, foundPodcast);
   }
 
   const now = moment.utc().toISOString();
-  const updatePodcast = await Podcast.update({
-    name: name, 
-    slug: slugify(name, '_'),
-    person_name: personName,
-    iframe: iframe,
-    status: 1,
-    updated_at: now
-  }, {
-    where: {
-      podcast_id: podcast_id
+  const [updatePodcast] = await Podcast.update(
+    {
+      name: name,
+      slug: slugify(name.toLowerCase(),'-'),
+      description: description,
+      person: person,
+      person_career: person_career,
+      embed: embed,
+      spotify_embed: spotify_embed,
+      duration: duration,
+      is_published: is_published,
+      is_featured: is_featured,
+      status: status,
+      updated_at: now,
+    },
+    {
+      where: {
+        podcast_id: podcast_id,
+      }
     }
-  });
+  );
 
-  if (updatePodcast) {
-    return {
-      status: true,
-      data: updatePodcast
-    };
-  }
+  return {
+    status: true,
+    data: updatePodcast
+  };
 }
 
 /**
- * Delete the podcast.
+ * Delete podcast by id.
  * @param req
  * @returns {Promise<any>}
  */
-async function softDelete({ params }) {
+async function deletePodcast({ params }) {
   const { podcast_id } = params || {};
+
   const foundPodcast = await Podcast.findOne({
     where: {
       podcast_id: podcast_id
@@ -197,34 +266,36 @@ async function softDelete({ params }) {
   });
 
   if (!foundPodcast) {
-    throw new GenericError(400, '', `Podcast not exists!`, foundPodcast);
+    throw new GenericError(400, '', `Podcast does not exist!`, foundPodcast);
   }
 
   const now = moment.utc().toISOString();
-  const softDeletePodcast = await Podcast.update({
-    is_published: false,
-    status: 0,
-    deleted_at: now,
-  }, {
-    where: {
-      podcast_id: podcast_id
+  const deletePodcast = await Podcast.update(
+    {
+      status: false,
+      updated_at: now,
+      deleted_at: now,
+    },
+    {
+      where: {
+        foundPodcast: foundPodcast,
+      }
     }
-  });
+  );
 
-  if (softDeletePodcast) {
-    return {
-      status: true,
-      data: softDeletePodcast
-    };
-  }
+  return {
+    status: true,
+    data: deletePodcast
+  };
 }
-
 
 module.exports = {
   getAll,
+  getPodcast,
   create,
-  publish,
   setFeatured,
+  publish,
+  unPublish,
   update,
-  softDelete
+  deletePodcast
 };

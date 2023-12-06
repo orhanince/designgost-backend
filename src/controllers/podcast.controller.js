@@ -1,11 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const podcastService = require('../services/podcast.service');
+const podcastService = require('./../services/podcast.service');
 const validatorMiddleware = require('../middlewares/validator-middleware');
 const paginationMiddleware = require('../middlewares/pagination-middleware');
 const { param } = require('express-validator');
-const auth = require('../middlewares/auth');
-
 /**
  * Podcast Model
  * @typedef {object} Podcast
@@ -17,17 +15,25 @@ const auth = require('../middlewares/auth');
 /**
  * @typedef {object} GetPodcastList
  * @property {boolean} status - Service status
- * @property {number} count - Total user count
- * @property {array<Podcast>} count - Podcast list
+ * @property {number} count - Podcast user count
+ * @property {array<Tutorial>} count - Tutorial list
  */
 
 /**
- * GET /podcast/
+ * @typedef {object} GetPodcastResponse
+ * @property {boolean} status - Service status
+ * @property {number} data - Podcast data
+ */
+
+
+
+/**
+ * GET /
  * @summary Get all podcasts.
- * @tags Podcast
+ * @tags User
  * @return {GetPodcastList} 200 - success response - application/json
  */
-router.get('/',paginationMiddleware(), async (req, res, next) => {
+router.get('/', paginationMiddleware(), async (req, res, next) => {
   try {
     const result = await podcastService.getAll(req);
     res.status(200).json(result);
@@ -38,32 +44,10 @@ router.get('/',paginationMiddleware(), async (req, res, next) => {
 });
 
 /**
- * GET /podcast/{podcast_id}
- * @summary Get podcast by id.
+ * POST /podcast/
+ * @summary Add new podcast
  * @tags Podcast
- * @return {GetTodoList} 200 - success response - application/json
- */
-router.get(
-  '/:user_id',
-  paginationMiddleware(),
-  async (req, res, next) => {
-    try {
-      const result = await podcastService.getByID({ ID: req.params.podcast_id });
-      res.status(200).json(result);
-    } catch (e) {
-      // this line is require for global error handling.
-      next(e);
-    }
-  }
-);
-
-/**
- * POST /podcast/{podcast_id}
- * @summary Update podcast.
- * @tags Podcast
- * @param {string} podcast_id.path - Podcast id.
- * @return {UpdatePodcastResponse} 200 - success response - application/json
- * @security bearerAuth
+ * @return {CreatePodcastResponse} 200 - success response - application/json
  */
 router.post(
   '/',
@@ -79,21 +63,41 @@ router.post(
 );
 
 /**
- * @typedef {object} UpdatePodcastResponse
- * @property {string} status - true
+ * GET /{podcast_id}
+ * @summary Get podcast by id.
+ * @tags Podcast
+ * @param {string} tutorial_id.path - Podcast id.
+ * @return {GetPodcastResponse} 200 - success response - application/json
  */
+router.get(
+  '/:podcast_id',
+  validatorMiddleware(param('podcast_id').isUUID('4')),
+  async (req, res, next) => {
+    try {
+      const result = await podcastService.getPodcast(req);
+      res.status(200).json(result);
+    } catch (e) {
+      // this line is require for global error handling.
+      next(e);
+    }
+  }
+);
 
 /**
- * PUT /podcast/{podcast_id}
- * @summary Update podcast.
+ * @typedef {object} UpdatePodcastResponse
+ * @property {boolean} status - Service status
+ */
+
+
+/**
+ * PUT /{podcast_id}
+ * @summary Update tutorial.
  * @tags Podcast
- * @param {string} podcast_id.path - Podcast id.
+ * @param {string} tutorial_id.path - Tutorial id.
  * @return {UpdatePodcastResponse} 200 - success response - application/json
- * @security bearerAuth
  */
 router.put(
-  '/:user_id',
-  ...auth(),
+  '/:podcast_id',
   validatorMiddleware(param('podcast_id').isUUID('4')),
   async (req, res, next) => {
     try {
@@ -106,36 +110,17 @@ router.put(
   }
 );
 
+/**
+ * @typedef {object} SetFeaturedResponse
+ * @property {string} status - true
+ */
 
 /**
- * PUT /podcast/publish/{podcast_id}
+ * PUT /featured/{podcast_id}
  * @summary Publish podcast.
  * @tags Podcast
- * @param {string} podcast_id.path - Podcast id.
- * @return {UpdatePodcastResponse} 200 - success response - application/json
- * @security bearerAuth
- */
-router.put(
-  '/publish/:podcast_id',
-  validatorMiddleware(param('podcast_id').isUUID('4')),
-  async (req, res, next) => {
-    try {
-      const result = await podcastService.publish(req);
-      res.status(200).json(result);
-    } catch (e) {
-      // this line is require for global error handling.
-      next(e);
-    }
-  }
-);
-
-/**
- * PUT /podcast/featured/{podcast_id}
- * @summary Set featured podcast.
- * @tags Podcast
- * @param {string} podcast_id.path - Podcast id.
- * @return {UpdatePodcastResponse} 200 - success response - application/json
- * @security bearerAuth
+ * @param {string} tutorial_id.path - Podcast id.
+ * @return {SetFeaturedResponse} 200 - success response - application/json
  */
 router.put(
   '/featured/:podcast_id',
@@ -152,19 +137,74 @@ router.put(
 );
 
 /**
- * PUT /podcast/featured/{podcast_id}
- * @summary Set featured podcast.
- * @tags Podcast
- * @param {string} podcast_id.path - Podcast id.
- * @return {UpdatePodcastResponse} 200 - success response - application/json
- * @security bearerAuth
+ * @typedef {object} PublishPodcastResponse
+ * @property {boolean} status - Service status
  */
-router.delete(
-  '/featured/:podcast_id',
+
+/**
+ * PUT /publish/{podcast_id}
+ * @summary Publish podcast.
+ * @tags Podcast
+ * @param {string} tutorial_id.path - Podcast id.
+ * @return {PublishPodcastResponse} 200 - success response - application/json
+ */
+router.put(
+  '/publish/:podcast_id',
   validatorMiddleware(param('podcast_id').isUUID('4')),
   async (req, res, next) => {
     try {
-      const result = await podcastService.softDelete(req);
+      const result = await podcastService.publish(req);
+      res.status(200).json(result);
+    } catch (e) {
+      // this line is require for global error handling.
+      next(e);
+    }
+  }
+);
+
+/**
+ * @typedef {object} UnPublishPodcastResponse
+ * @property {boolean} status - Service status
+ */
+
+/**
+ * PUT /publish/{podcast_id}
+ * @summary Publish podcast.
+ * @tags Podcast
+ * @param {string} tutorial_id.path - Podcast id.
+ * @return {UnPublishPodcastResponse} 200 - success response - application/json
+ */
+router.put(
+  '/unpublish/:podcast_id',
+  validatorMiddleware(param('podcast_id').isUUID('4')),
+  async (req, res, next) => {
+    try {
+      const result = await podcastService.unPublish(req);
+      res.status(200).json(result);
+    } catch (e) {
+      // this line is require for global error handling.
+      next(e);
+    }
+  }
+);
+/**
+ * @typedef {object} DeletePodcastResponse
+ * @property {boolean} status - Service status
+ */
+
+/**
+ * DELETE /{podcast_id}
+ * @summary Delete podcast.
+ * @tags Podcast
+ * @param {string} podcast_id.path - Tutorial id.
+ * @return {podcast_id} 200 - success response - application/json
+ */
+router.delete(
+  '/:podcast_id',
+  validatorMiddleware(param('podcast_id').isUUID('4')),
+  async (req, res, next) => {
+    try {
+      const result = await podcastService.deletePodcast(req);
       res.status(200).json(result);
     } catch (e) {
       // this line is require for global error handling.
