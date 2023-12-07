@@ -25,6 +25,7 @@ const { Newsletter } = require('./newsletter.js');
 const { Tutorial } = require('./tutorial.js');
 const { Article } = require('./article.js');
 const { Role } = require('./role.js');
+const { Discount } = require('./discount.js');
 
 module.exports = {
   Article,
@@ -40,5 +41,6 @@ module.exports = {
   Country,
   Newsletter,
   Tutorial,
-  Role
+  Role,
+  Discount
 };

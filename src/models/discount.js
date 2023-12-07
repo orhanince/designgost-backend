@@ -1,8 +1,8 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../utils/sequelize-client');
 
-const Article = sequelize.define(
-  'article',
+const Discount = sequelize.define(
+  'discount',
   {
     id: {
       allowNull: false,
@@ -10,19 +10,9 @@ const Article = sequelize.define(
       autoIncrement: true,
       type: DataTypes.BIGINT,
     },
-    article_id: {
+    discount_id: {
       allowNull: false,
       primaryKey: true,
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-    },
-    design_category_id: {
-      allowNull: true,
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-    },
-    user_id: {
-      allowNull: true,
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
     },
@@ -30,48 +20,53 @@ const Article = sequelize.define(
       allowNull: false,
       type: DataTypes.STRING(255),
     },
-    slug: {
-      allowNull: false,
-      type: DataTypes.STRING(255),
+    position: {
+      allowNull: true,
+      type: DataTypes.INTEGER
     },
-    content: {
+    code: {
       allowNull: true,
       type: DataTypes.TEXT
     },
-    cover_img: {
+    card_text: {
       allowNull: true,
-      type: DataTypes.TEXT,
+      type: DataTypes.TEXT
     },
-    word_count: {
+    banner_text: {
+       allowNull: true,
+       type: DataTypes.TEXT
+    },
+    url: {
         allowNull: true,
-        type: DataTypes.INTEGER,
-    },
-    read_time: {
-        allowNull: true,
-        type: DataTypes.INTEGER,
-    },
-    is_published: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
+        type: DataTypes.TEXT
     },
     is_featured: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false,
     },
+    is_published: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+    },
+    published_start_date: {
+        allowNull: true,
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+    },
+    published_end_date: {
+        allowNull: true,
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+    },
     status: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
     },
     created_at: {
       allowNull: false,
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-    },
-    published_at: {
-      allowNull: true,
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
     },
@@ -104,8 +99,8 @@ const Article = sequelize.define(
     freezeTableName: true,
 
     // define the table's name
-    tableName: 'article',
+    tableName: 'discount',
   }
 );
 
-module.exports = { Article };
+module.exports = { Discount };

@@ -2,26 +2,16 @@
 
 module.exports = {
   async up(queryInterface, DataTypes) {
-    await queryInterface.createTable('article', {
+    await queryInterface.createTable('discount', {
       id: {
         allowNull: false,
         primaryKey: true,
         autoIncrement: true,
         type: DataTypes.BIGINT,
       },
-      article_id: {
+      discount_id: {
         allowNull: false,
         primaryKey: true,
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-      },
-      design_category_id: {
-        allowNull: true,
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-      },
-      user_id: {
-        allowNull: true,
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
       },
@@ -29,48 +19,53 @@ module.exports = {
         allowNull: false,
         type: DataTypes.STRING(255),
       },
-      slug: {
-        allowNull: false,
-        type: DataTypes.STRING(255),
+      position: {
+        allowNull: true,
+        type: DataTypes.INTEGER
       },
-      content: {
+      code: {
         allowNull: true,
         type: DataTypes.TEXT
       },
-      cover_img: {
+      card_text: {
         allowNull: true,
-        type: DataTypes.TEXT,
+        type: DataTypes.TEXT
       },
-      word_count: {
+      banner_text: {
+         allowNull: true,
+         type: DataTypes.TEXT
+      },
+      url: {
           allowNull: true,
-          type: DataTypes.INTEGER,
-      },
-      read_time: {
-          allowNull: true,
-          type: DataTypes.INTEGER,
-      },
-      is_published: {
-          type: DataTypes.BOOLEAN,
-          allowNull: false,
-          defaultValue: false,
+          type: DataTypes.TEXT
       },
       is_featured: {
           type: DataTypes.BOOLEAN,
           allowNull: false,
           defaultValue: false,
       },
+      is_published: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
+      },
+      published_start_date: {
+          allowNull: true,
+          type: DataTypes.DATE,
+          defaultValue: DataTypes.NOW,
+      },
+      published_end_date: {
+          allowNull: true,
+          type: DataTypes.DATE,
+          defaultValue: DataTypes.NOW,
+      },
       status: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
       },
       created_at: {
         allowNull: false,
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-      },
-      published_at: {
-        allowNull: true,
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
       },
@@ -93,6 +88,6 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
-    await queryInterface.dropTable('article');
+    await queryInterface.dropTable('discount');
   },
 };

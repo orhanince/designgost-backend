@@ -9,6 +9,7 @@ const newsletterController = require('./newsletter.controller');
 const designCategoryController = require('./design-category.controller');
 const roleController = require('./role.controller');
 const blogController = require('./blog.controller');
+const discountController = require('./discount.controller');
 
 /**
  *
@@ -18,6 +19,7 @@ module.exports = (app) => {
   app.use('/', healthy);
   app.use('/auth', authController);
   app.use('/blog', blogController);
+  app.use('/discount',discountController);
   app.use('/job', careerController);
   app.use('/podcast', podcastController);
   app.use('/role', roleController);
