@@ -35,7 +35,7 @@ async function getAll({ pagination }) {
   };
 }
 /**
- * Add new podcast.
+ * Add new article.
  * @param {string} name
  * @param {string} surname
  * @param {string} email
@@ -43,7 +43,7 @@ async function getAll({ pagination }) {
  * @returns {Promise<{status: boolean, token: (*)}>}
  */
 async function create({ body }) {
-  const { name, embed, description, spotify_embed, duration, person, person_career } = body || {};
+  const { name, design_category_id, content, cover_img, word_count, read_time } = body || {};
   
   const foundPodcast = await Article.count({
     where: {
@@ -54,33 +54,32 @@ async function create({ body }) {
   if (foundPodcast) {
     throw new GenericError(400, '', `Article already exists!`, foundPodcast);
   }
-
   const now = moment.utc().toISOString();
-  const createPodcast = await Article.create({
-    podcast_id: uuidv4(),
+  const createArticle = await Article.create({
+    article_id: uuidv4(),
+    design_category_id: design_category_id,
+    user_id: uuidv4(),
     name: name,
     slug: slugify(name.toLowerCase(),'-'),
-    description: description,
-    embed: embed,
-    spotify_embed: spotify_embed,
-    duration: duration,
-    person: person,
-    person_career: person_career,
+    content: content,
+    cover_img: cover_img,
+    word_count: word_count,
+    read_time: read_time,
     status: 1,
     created_at: now,
     updated_at: now,
   });
 
-  if (spotify_embed) {
+  if (createArticle) {
     return {
       status: true,
-      data: createPodcast
+      data: createArticle
     };
   }
 }
 
 /**
- * Get single podcast by id.
+ * Get single article by id.
  * @param req
  * @returns {Promise<any>}
  */
@@ -88,7 +87,7 @@ async function getArticle({ params }) {
   const { article_id } = params || {}
   return await Article.findOne({
     where: {
-      podcastarticle_id_id: article_id
+      article_id: article_id
     }
   });
 }
@@ -210,7 +209,7 @@ async function setFeatured({ params }) {
  */
 async function update({ params, body }) {
   const { article_id } = params || {};
-  const { name, description, person, person_career, embed, spotify_embed, duration, is_published, is_featured, status } = body || {};
+  const { name, design_category_id, content, cover_img, word_count, read_time, is_published, is_featured, status  } = body || {};
   
   const foundArticle = await Article.findOne({
     where: {
@@ -225,14 +224,14 @@ async function update({ params, body }) {
   const now = moment.utc().toISOString();
   const [updateArticle] = await Article.update(
     {
+      design_category_id: design_category_id,
+      user_id: uuidv4(),
       name: name,
       slug: slugify(name.toLowerCase(),'-'),
-      description: description,
-      person: person,
-      person_career: person_career,
-      embed: embed,
-      spotify_embed: spotify_embed,
-      duration: duration,
+      content: content,
+      cover_img: cover_img,
+      word_count: word_count,
+      read_time: read_time,
       is_published: is_published,
       is_featured: is_featured,
       status: status,
@@ -256,7 +255,7 @@ async function update({ params, body }) {
  * @param req
  * @returns {Promise<any>}
  */
-async function deletePodcast({ params }) {
+async function deleteArticle({ params }) {
   const { article_id } = params || {};
 
   const foundArticle = await Article.findOne({
@@ -297,5 +296,5 @@ module.exports = {
   publish,
   unPublish,
   update,
-  deletePodcast
+  deleteArticle
 };

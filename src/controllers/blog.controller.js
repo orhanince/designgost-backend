@@ -25,7 +25,16 @@ const { param } = require('express-validator');
  * @property {number} data - Podcast data
  */
 
+/**
+ * @typedef {object} CreateArticleResponse
+ * @property {boolean} status - Service status
+ * @property {number} data - Article data
+ */
 
+/**
+ * @typedef {object} GeneralResponse
+ * @property {boolean} status - Service status
+ */
 
 /**
  * GET /
@@ -67,7 +76,7 @@ router.post(
  * @summary Get podcast by id.
  * @tags Podcast
  * @param {string} article_id.path - Podcast id.
- * @return {GetPodcastResponse} 200 - success response - application/json
+ * @return {GetArticleResponse} 200 - success response - application/json
  */
 router.get(
   '/:article_id',
@@ -84,17 +93,11 @@ router.get(
 );
 
 /**
- * @typedef {object} UpdateArticleResponse
- * @property {boolean} status - Service status
- */
-
-
-/**
  * PUT /{article_id}
  * @summary Update article
  * @tags Podcast
  * @param {string} article_id.path - Tutorial id.
- * @return {UpdateArticleResponse} 200 - success response - application/json
+ * @return {GeneralResponse} 200 - success response - application/json
  */
 router.put(
   '/:article_id',
@@ -111,16 +114,11 @@ router.put(
 );
 
 /**
- * @typedef {object} SetFeaturedResponse
- * @property {string} status - true
- */
-
-/**
  * PUT /featured/{article_id}
  * @summary Publish article.
  * @tags Podcast
  * @param {string} article_id.path - Podcast id.
- * @return {SetFeaturedResponse} 200 - success response - application/json
+ * @return {GeneralResponse} 200 - success response - application/json
  */
 router.put(
   '/featured/:article_id',
@@ -137,16 +135,11 @@ router.put(
 );
 
 /**
- * @typedef {object} PublishPodcastResponse
- * @property {boolean} status - Service status
- */
-
-/**
  * PUT /publish/{article_id}
  * @summary Publish article.
  * @tags Article
  * @param {string} tutorial_id.path - Article id.
- * @return {PublishPodcastResponse} 200 - success response - application/json
+ * @return {GeneralResponse} 200 - success response - application/json
  */
 router.put(
   '/publish/:article_id',
@@ -163,16 +156,11 @@ router.put(
 );
 
 /**
- * @typedef {object} UnPublishPodcastResponse
- * @property {boolean} status - Service status
- */
-
-/**
  * PUT /publish/{podcast_id}
  * @summary Publish podcast.
  * @tags Podcast
  * @param {string} tutorial_id.path - Podcast id.
- * @return {UnPublishPodcastResponse} 200 - success response - application/json
+ * @return {GeneralResponse} 200 - success response - application/json
  */
 router.put(
   '/unpublish/:article_id',
@@ -187,17 +175,13 @@ router.put(
     }
   }
 );
-/**
- * @typedef {object} DeletePodcastResponse
- * @property {boolean} status - Service status
- */
 
 /**
  * DELETE /{article_id}
  * @summary Delete article.
  * @tags Podcast
  * @param {string} article_id.path - Tutorial id.
- * @return {podcast_id} 200 - success response - application/json
+ * @return {GeneralResponse} 200 - success response - application/json
  */
 router.delete(
   '/:article_id',
