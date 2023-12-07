@@ -22,9 +22,10 @@ const { WorkType } = require('./work-type.js');
 const { Profession } = require('./profession.js');
 const { Country } = require('./country.js');
 const { Newsletter } = require('./newsletter.js');
-const { Tutorial } = require('./tutorial.js');
-
+const { Tutorial } = require('./tutorial.js');
+const { Article } = require('./article.js');
 module.exports = {
+  Article,
   Career,
   WorkType,
   Profession,

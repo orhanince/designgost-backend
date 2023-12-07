@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const podcastService = require('./../services/podcast.service');
+const blogService = require('./../services/blog.service');
 const validatorMiddleware = require('../middlewares/validator-middleware');
 const paginationMiddleware = require('../middlewares/pagination-middleware');
 const { param } = require('express-validator');
@@ -35,7 +35,7 @@ const { param } = require('express-validator');
  */
 router.get('/', paginationMiddleware(), async (req, res, next) => {
   try {
-    const result = await podcastService.getAll(req);
+    const result = await blogService.getAll(req);
     res.status(200).json(result);
   } catch (e) {
     // this line is require for global error handling.
@@ -44,16 +44,16 @@ router.get('/', paginationMiddleware(), async (req, res, next) => {
 });
 
 /**
- * POST /podcast/
- * @summary Add new podcast
+ * POST /blog/
+ * @summary Add new article
  * @tags Podcast
- * @return {CreatePodcastResponse} 200 - success response - application/json
+ * @return {CreateArticleResponse} 200 - success response - application/json
  */
 router.post(
   '/',
   async (req, res, next) => {
     try {
-      const result = await podcastService.create(req);
+      const result = await blogService.create(req);
       res.status(200).json(result);
     } catch (e) {
       // this line is require for global error handling.
@@ -63,18 +63,18 @@ router.post(
 );
 
 /**
- * GET /{podcast_id}
+ * GET /{article_id}
  * @summary Get podcast by id.
  * @tags Podcast
- * @param {string} tutorial_id.path - Podcast id.
+ * @param {string} article_id.path - Podcast id.
  * @return {GetPodcastResponse} 200 - success response - application/json
  */
 router.get(
-  '/:podcast_id',
-  validatorMiddleware(param('podcast_id').isUUID('4')),
+  '/:article_id',
+  validatorMiddleware(param('article_id').isUUID('4')),
   async (req, res, next) => {
     try {
-      const result = await podcastService.getPodcast(req);
+      const result = await blogService.getPodcast(req);
       res.status(200).json(result);
     } catch (e) {
       // this line is require for global error handling.
@@ -84,24 +84,24 @@ router.get(
 );
 
 /**
- * @typedef {object} UpdatePodcastResponse
+ * @typedef {object} UpdateArticleResponse
  * @property {boolean} status - Service status
  */
 
 
 /**
- * PUT /{podcast_id}
- * @summary Update tutorial.
+ * PUT /{article_id}
+ * @summary Update article
  * @tags Podcast
- * @param {string} tutorial_id.path - Tutorial id.
- * @return {UpdatePodcastResponse} 200 - success response - application/json
+ * @param {string} article_id.path - Tutorial id.
+ * @return {UpdateArticleResponse} 200 - success response - application/json
  */
 router.put(
-  '/:podcast_id',
-  validatorMiddleware(param('podcast_id').isUUID('4')),
+  '/:article_id',
+  validatorMiddleware(param('article_id').isUUID('4')),
   async (req, res, next) => {
     try {
-      const result = await podcastService.update(req);
+      const result = await blogService.update(req);
       res.status(200).json(result);
     } catch (e) {
       // this line is require for global error handling.
@@ -116,18 +116,18 @@ router.put(
  */
 
 /**
- * PUT /featured/{podcast_id}
- * @summary Publish podcast.
+ * PUT /featured/{article_id}
+ * @summary Publish article.
  * @tags Podcast
- * @param {string} tutorial_id.path - Podcast id.
+ * @param {string} article_id.path - Podcast id.
  * @return {SetFeaturedResponse} 200 - success response - application/json
  */
 router.put(
-  '/featured/:podcast_id',
-  validatorMiddleware(param('podcast_id').isUUID('4')),
+  '/featured/:article_id',
+  validatorMiddleware(param('article_id').isUUID('4')),
   async (req, res, next) => {
     try {
-      const result = await podcastService.setFeatured(req);
+      const result = await blogService.setFeatured(req);
       res.status(200).json(result);
     } catch (e) {
       // this line is require for global error handling.
@@ -142,18 +142,18 @@ router.put(
  */
 
 /**
- * PUT /publish/{podcast_id}
- * @summary Publish podcast.
- * @tags Podcast
- * @param {string} tutorial_id.path - Podcast id.
+ * PUT /publish/{article_id}
+ * @summary Publish article.
+ * @tags Article
+ * @param {string} tutorial_id.path - Article id.
  * @return {PublishPodcastResponse} 200 - success response - application/json
  */
 router.put(
-  '/publish/:podcast_id',
-  validatorMiddleware(param('podcast_id').isUUID('4')),
+  '/publish/:article_id',
+  validatorMiddleware(param('article_id').isUUID('4')),
   async (req, res, next) => {
     try {
-      const result = await podcastService.publish(req);
+      const result = await blogService.publish(req);
       res.status(200).json(result);
     } catch (e) {
       // this line is require for global error handling.
@@ -175,11 +175,11 @@ router.put(
  * @return {UnPublishPodcastResponse} 200 - success response - application/json
  */
 router.put(
-  '/unpublish/:podcast_id',
-  validatorMiddleware(param('podcast_id').isUUID('4')),
+  '/unpublish/:article_id',
+  validatorMiddleware(param('article_id').isUUID('4')),
   async (req, res, next) => {
     try {
-      const result = await podcastService.unPublish(req);
+      const result = await blogService.unPublish(req);
       res.status(200).json(result);
     } catch (e) {
       // this line is require for global error handling.
@@ -193,18 +193,18 @@ router.put(
  */
 
 /**
- * DELETE /{podcast_id}
- * @summary Delete podcast.
+ * DELETE /{article_id}
+ * @summary Delete article.
  * @tags Podcast
- * @param {string} podcast_id.path - Tutorial id.
+ * @param {string} article_id.path - Tutorial id.
  * @return {podcast_id} 200 - success response - application/json
  */
 router.delete(
-  '/:podcast_id',
-  validatorMiddleware(param('podcast_id').isUUID('4')),
+  '/:article_id',
+  validatorMiddleware(param('article_id').isUUID('4')),
   async (req, res, next) => {
     try {
-      const result = await podcastService.deletePodcast(req);
+      const result = await blogService.deletePodcast(req);
       res.status(200).json(result);
     } catch (e) {
       // this line is require for global error handling.

@@ -32,7 +32,7 @@ const auth = require('../middlewares/auth');
  * @security bearerAuth
  * @return {GetUserList} 200 - success response - application/json
  */
-router.get('/', ...auth(), paginationMiddleware(), async (req, res, next) => {
+router.get('/', paginationMiddleware(), async (req, res, next) => {
   try {
     const result = await userService.getAll(req);
     res.status(200).json(result);

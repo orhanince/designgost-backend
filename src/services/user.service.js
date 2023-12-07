@@ -6,6 +6,7 @@ const moment = require('moment-timezone');
 const cryptoService = require('./crypto.service');
 const jwt = require('./../utils/jwt');
 const paginationOptionGenerator = require('../utils/pagination-option-generator');
+
 /**
  * Get all users
  * @param pagination
@@ -162,13 +163,11 @@ async function createUserToken({ user_id, email }) {
   return User.findOne(filter);
 }
 
-async function revokeRequestToken() {}
 
 module.exports = {
   createUser,
   getUser,
   createUserToken,
   updateUser,
-  getAll,
-  revokeRequestToken,
+  getAll
 };

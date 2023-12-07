@@ -1,47 +1,172 @@
-const _ = require('lodash');
 const { Country } = require('../models');
 const GenericError = require('../utils/generic-error');
 const { v4: uuidv4 } = require('uuid');
 const moment = require('moment-timezone');
-const cryptoService = require('./crypto.service');
-const jwt = require('../utils/jwt');
 const paginationOptionGenerator = require('../utils/pagination-option-generator');
-const sequelizeClient = require('./../utils/sequelize-client');
-const { default: slugify } = require('slugify');
+
 /**
  * Get all countries
  * @param pagination
- * @param AUTH
  * @returns {Promise<{data: Promise<Model[]> | Promise<any[]>, count: *, status: boolean}>}
  */
-async function getAll() {
-    const country = await sequelizeClient.query('SELECT * FROM data_countries');
-    const countryTranlation = await sequelizeClient.query('SELECT * FROM data_country_translations');
-    const allCountry=[];
-    for (let index = 0; index < countryTranlation[0].length; index++) {
-        const element = countryTranlation[0][index];
-        const elementTwo = country[0][index];
-        console.log('element', element);
-        console.log('elementTwo', elementTwo);
-        element.code = elementTwo.code;
-        allCountry.push(element);
-    }
-    
-    for await (const c of allCountry) {
-         const now = moment.utc().toISOString();
-         const createCountry = await Country.create({
-         country_id: uuidv4(),
-         name: c.title,
-         code: c.code,
-         status: 1,
-         created_at: now,
-         updated_at: now,
-         });
-         console.log('createCountry', createCountry);
-       }
+async function getAll({ pagination }) {
+  const options = paginationOptionGenerator({
+    pagination,
+    likeColumns: ['id', 'country_id'],
+    where: {
+      status: true,
+    },
+  });
+
+  const count = await Country.count({
+    where: options.where,
+  });
+
+  const data = await Country.findAll({
+    attributes: ['country_id', 'name', 'code','status'],
+    options,
+  });
+
+  return {
+    status: true,
+    count,
+    data,
+  };
 }
 
+/**
+ * Add new country.
+ * @param {string} name 
+ * @param {string} code 
+ * @returns 
+ */
+async function create({ body }) {
+  const { name, code } = body || {};
+  
+  const foundCountry = await Country.count({
+    where: {
+      code: code,
+    },
+  });
+
+  if (foundCountry) {
+    throw new GenericError(400, '', `Country already exists!`, foundCountry);
+  }
+
+  const now = moment.utc().toISOString();
+  const createCountry = await Country.create({
+    country_id: uuidv4(),
+    name: name,
+    code: code,
+    status: 1,
+    created_at: now,
+    updated_at: now,
+  });
+
+  if (createCountry) {
+    return {
+      status: true,
+      data: createCountry
+    };
+  }
+}
+
+/**
+ * Get single country by id.
+ * @param req
+ * @returns {Promise<any>}
+ */
+async function getCountry({ params }) {
+  const { country_id } = params || {}
+  return await Country.findOne({
+    where: {
+      country_id: country_id
+    }
+  });
+}
+
+/**
+ * Update country by id.
+ * @param req
+ * @returns {Promise<any>}
+ */
+async function update({ params, body }) {
+  const { country_id } = params || {};
+  const { name, code, status } = body || {};
+  
+  const foundCountry = await Country.findOne({
+    where: {
+      country_id: country_id
+    }
+  });
+
+  if (!foundCountry) {
+    throw new GenericError(400, '', `Country does not exist!`, foundCountry);
+  }
+
+  const now = moment.utc().toISOString();
+  const [updateCountry] = await Country.update(
+    {
+      name: name,
+      code: code,
+      status: status,
+      updated_at: now,
+    },
+    {
+      where: {
+        country_id: country_id,
+      }
+    }
+  );
+
+  return {
+    status: true,
+    data: updateCountry
+  };
+}
+
+/**
+ * Delete country by id.
+ * @param req
+ * @returns {Promise<any>}
+ */
+async function deleteCountry({ params }) {
+  const { country_id } = params || {};
+
+  const foundCountry = await Country.findOne({
+    where: {
+      country_id: country_id
+    }
+  });
+
+  if (!foundCountry) {
+    throw new GenericError(400, '', `Country does not exist!`, foundCountry);
+  }
+
+  const now = moment.utc().toISOString();
+  const deleteCountry = await Country.update(
+    {
+      status: false,
+      updated_at: now,
+      deleted_at: now,
+    },
+    {
+      where: {
+        country_id: country_id,
+      }
+    }
+  );
+
+  return {
+    status: true,
+    data: deleteCountry
+  };
+}
 
 module.exports = {
-  getAll
+  getAll,
+  getCountry,
+  create,
+  update,
+  deleteCountry
 };
