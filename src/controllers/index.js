@@ -1,6 +1,16 @@
 const healthy = require('./healthy.controller');
 const authController = require('./auth.controller');
 const userController = require('./user.controller');
+const careerController = require('./career.controller');
+const podcastController = require('./podcast.controller');
+const tutorialController = require('./tutorial.controller');
+const countryController = require('./country.controller');
+const newsletterController = require('./newsletter.controller');
+const designCategoryController = require('./design-category.controller');
+const roleController = require('./role.controller');
+const blogController = require('./blog.controller');
+const discountController = require('./discount.controller');
+
 /**
  *
  * @param app {Application}
@@ -8,5 +18,14 @@ const userController = require('./user.controller');
 module.exports = (app) => {
   app.use('/', healthy);
   app.use('/auth', authController);
+  app.use('/blog', blogController);
+  app.use('/discount',discountController);
+  app.use('/job', careerController);
+  app.use('/podcast', podcastController);
+  app.use('/role', roleController);
+  app.use('/tutorial', tutorialController);
   app.use('/user', userController);
+  app.use('/country', countryController);
+  app.use('/newsletter', newsletterController);
+  app.use('/design-category',designCategoryController);
 };

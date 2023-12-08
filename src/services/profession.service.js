@@ -1,14 +1,12 @@
 const _ = require('lodash');
-const { User } = require('./../models');
+const { Profession } = require('./../models');
 const GenericError = require('../utils/generic-error');
 const { v4: uuidv4 } = require('uuid');
 const moment = require('moment-timezone');
-const cryptoService = require('./crypto.service');
-const jwt = require('./../utils/jwt');
 const paginationOptionGenerator = require('../utils/pagination-option-generator');
-
+const { default: slugify } = require('slugify');
 /**
- * Get all users
+ * Get all profession list.
  * @param pagination
  * @param AUTH
  * @returns {Promise<{data: Promise<Model[]> | Promise<any[]>, count: *, status: boolean}>}
@@ -16,18 +14,17 @@ const paginationOptionGenerator = require('../utils/pagination-option-generator'
 async function getAll({ pagination }) {
   const options = paginationOptionGenerator({
     pagination,
-    likeColumns: ['id', 'user_id'],
+    likeColumns: ['id', 'profession_id'],
     where: {
       status: true,
     },
   });
 
-  const count = await User.count({
+  const count = await Profession.count({
     where: options.where,
   });
 
-  const data = await User.findAll({
-    attributes: ['user_id', 'name', 'surname', 'username', 'email'],
+  const data = await Profession.findAll({
     options,
   });
 
@@ -39,48 +36,40 @@ async function getAll({ pagination }) {
 }
 
 /**
- * Create new user
+ * Create new profession.
  * @param {string} name
  * @param {string} surname
  * @param {string} email
  * @param {string} password
  * @returns {Promise<{status: boolean, token: (*)}>}
  */
-async function createUser({ name, email, password }) {
-  const foundUser = await User.count({
+async function create({ name }) {
+  const slug = slugify(name, '_');
+  const foundJobType = await Profession.count({
     where: {
-      email: email,
+      slug: slug,
     },
   });
 
-  if (foundUser) {
-    throw new GenericError(400, '', `User already exists!`, foundUser);
+  if (foundJobType) {
+    throw new GenericError(400, '', `Job type already exists!`, foundJobType);
   }
 
   const now = moment.utc().toISOString();
-  const createUser = await User.create({
-    user_id: uuidv4(),
+  const createJobType = await Profession.create({
+    job_type_id: uuidv4(),
     name: name,
-    email: email,
-    password: cryptoService.hashPassword(password),
-    is_email_verified: false,
-    email_verification_code: uuidv4(),
+    slug: slugify(name, '_'),
+    language: 'tr',
     status: 1,
     created_at: now,
     updated_at: now,
   });
 
-  if (createUser) {
+  if (createJobType) {
     return {
       status: true,
-      token: jwt.createJwtToken({
-        user_id: JSON.parse(JSON.stringify(createUser)).user_id,
-        name: JSON.parse(JSON.stringify(createUser)).user_id.name,
-        email: JSON.parse(JSON.stringify(createUser)).email,
-        bio: JSON.parse(JSON.stringify(createUser)).bio,
-        hair_color: JSON.parse(JSON.stringify(createUser)).hair_color,
-        favorite_food: JSON.parse(JSON.stringify(createUser)).favorite_food,
-      }),
+      data: createJobType
     };
   }
 }
@@ -90,7 +79,7 @@ async function createUser({ name, email, password }) {
  * @param req
  * @returns {Promise<any>}
  */
-async function getUser({ user_id, email }) {
+async function getProfession({ user_id, email }) {
   const filter = {
     where: {
       status: true,
@@ -102,7 +91,7 @@ async function getUser({ user_id, email }) {
   } else if (!_.isEmpty(email)) {
     filter.where.email = email;
   }
-  return User.findOne(filter);
+  return Profession.findOne(filter);
 }
 
 /**
@@ -110,9 +99,9 @@ async function getUser({ user_id, email }) {
  * @param req
  * @returns {Promise<any>}
  */
-async function updateUser({ body, AUTH }) {
+async function updateProfession({ body, AUTH }) {
   const { bio, hair_color, favorite_food } = body;
-  const foundUser = await User.count({
+  const foundUser = await Profession.count({
     where: {
       user_id: AUTH.user_id,
     },
@@ -123,7 +112,7 @@ async function updateUser({ body, AUTH }) {
   }
 
   const now = moment.utc().toISOString();
-  const [updateUser] = await User.update(
+  const [updateUser] = await Profession.update(
     {
       bio: bio,
       hair_color: hair_color,
@@ -160,14 +149,16 @@ async function createUserToken({ user_id, email }) {
     filter.email = email;
   }
 
-  return User.findOne(filter);
+  return JobType.findOne(filter);
 }
 
+async function revokeRequestToken() {}
 
 module.exports = {
-  createUser,
-  getUser,
+  create,
+  getJobType,
   createUserToken,
   updateUser,
-  getAll
+  getAll,
+  revokeRequestToken,
 };

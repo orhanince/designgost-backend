@@ -1,40 +1,44 @@
 const express = require('express');
 const router = express.Router();
-const userService = require('./../services/user.service');
+const jobService = require('../services/career.service');
 const validatorMiddleware = require('../middlewares/validator-middleware');
 const paginationMiddleware = require('../middlewares/pagination-middleware');
 const { param } = require('express-validator');
 const auth = require('../middlewares/auth');
 
 /**
- * User Model
- * @typedef {object} User
- * @property {string} user_id - User id (UUID)
- * @property {string} name - User name
- * @property {string} email - User email
- * @property {string} password - User password
- * @property {string} bio - User bio
- * @property {string} hair_color - User hair_color
- * @property {string} favorite_food - User favorite_food
+ * Job Model
+ * @typedef {object} Job
+ * @property {string} user_id - Job id (UUID)
+ * @property {string} name - Job name
+ * @property {string} description - Job description
  */
 
 /**
- * @typedef {object} GetUserList
+ * @typedef {object} GetJobList
  * @property {boolean} status - Service status
  * @property {number} count - Total user count
- * @property {array<User>} count - User list
+ * @property {array<Job>} count - Job list
  */
 
+router.get('/get-all', paginationMiddleware(), async (req, res, next) => {
+  try {
+    const result = await jobService.getOldAll(req);
+    res.status(200).json(result);
+  } catch (e) {
+    // this line is require for global error handling.
+    next(e);
+  }
+});
 /**
- * GET /user/
- * @summary Get all users.
- * @tags User
- * @security bearerAuth
- * @return {GetUserList} 200 - success response - application/json
+ * GET /job/
+ * @summary Get all jobs.
+ * @tags Job
+ * @return {GetJobList} 200 - success response - application/json
  */
 router.get('/', paginationMiddleware(), async (req, res, next) => {
   try {
-    const result = await userService.getAll(req);
+    const result = await jobService.getAll(req);
     res.status(200).json(result);
   } catch (e) {
     // this line is require for global error handling.
@@ -43,19 +47,18 @@ router.get('/', paginationMiddleware(), async (req, res, next) => {
 });
 
 /**
- * GET /user/{user_id}
- * @summary Get user by id.
- * @tags User
- * @security bearerAuth
+ * GET /user/{job_id}
+ * @summary Get job by id.
+ * @tags Job
+ * 
  * @return {GetTodoList} 200 - success response - application/json
  */
 router.get(
-  '/:user_id',
-  ...auth(),
+  '/:job_id',
   paginationMiddleware(),
   async (req, res, next) => {
     try {
-      const result = await userService.getUser({ user_id: req.AUTH.user_id });
+      const result = await jobService.getByID({ ID: req.params.job_id });
       res.status(200).json(result);
     } catch (e) {
       // this line is require for global error handling.
@@ -65,25 +68,25 @@ router.get(
 );
 
 /**
- * @typedef {object} UpdateUserResponse
+ * @typedef {object} UpdateJobResponse
  * @property {string} status - true
  */
 
 /**
- * PUT /user/{user_id}
- * @summary Update user.
- * @tags User
- * @param {string} user_id.path - user id.
- * @return {UpdateUserResponse} 200 - success response - application/json
+ * PUT /job/{job_id}
+ * @summary Update job.
+ * @tags Job
  * @security bearerAuth
+ * @param {string} job_id.path - job id.
+ * @return {UpdateJobResponse} 200 - success response - application/json
  */
 router.put(
-  '/:user_id',
+  '/:job_id',
   ...auth(),
-  validatorMiddleware(param('user_id').isUUID('4')),
+  validatorMiddleware(param('job_id').isUUID('4')),
   async (req, res, next) => {
     try {
-      const result = await userService.updateUser(req);
+      const result = await jobService.update(req);
       res.status(200).json(result);
     } catch (e) {
       // this line is require for global error handling.

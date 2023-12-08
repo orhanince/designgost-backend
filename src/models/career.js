@@ -1,8 +1,8 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../utils/sequelize-client');
 
-const User = sequelize.define(
-  'user',
+const Career = sequelize.define(
+  'career',
   {
     id: {
       allowNull: false,
@@ -10,7 +10,7 @@ const User = sequelize.define(
       autoIncrement: true,
       type: DataTypes.BIGINT,
     },
-    user_id: {
+    career_id: {
       allowNull: false,
       primaryKey: true,
       type: DataTypes.UUID,
@@ -18,105 +18,63 @@ const User = sequelize.define(
     },
     name: {
       allowNull: false,
-      type: DataTypes.STRING(30),
+      type: DataTypes.STRING(255),
     },
-    user_name: {
+    slug: {
       allowNull: false,
-      type: DataTypes.STRING(30),
+      type: DataTypes.STRING(255),
     },
-    display_name: {
-      allowNull: true,
-      type: DataTypes.STRING(30),
-    },
-    about: {
+    work_type: {
       allowNull: true,
       type: DataTypes.TEXT
     },
-    email: {
+    profession_id: {
       allowNull: false,
-      type: DataTypes.STRING(50),
-    },
-    password: {
-      allowNull: true,
-      type: DataTypes.STRING(255),
-    },
-    phone: {
-      allowNull: true,
-      type: DataTypes.STRING(30),
-    },
-    career_title: {
-      allowNull: true,
-      type: DataTypes.STRING(50),
-    },
-    current_company: {
-      allowNull: true,
-      type: DataTypes.STRING(50),
-    },
-    city: {
-      allowNull: true,
-      type: DataTypes.STRING(30),
-    },
-    country_id: {
-      allowNull: true,
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
     },
-    option: {
-      allowNull: true,
-      type: DataTypes.TEXT
+    description: {
+      allowNull: false,
+      type: DataTypes.TEXT,
     },
-    member_type: {
+    company: {
       allowNull: true,
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255),
     },
-    mentor_active: {
-      allowNull: true,
-      type: DataTypes.INTEGER,
-    },
-    expertise: {
-      allowNull: true,
-      type: DataTypes.TEXT
-    },
-    experience_days: {
-      allowNull: true,
-      type: DataTypes.INTEGER,
+    company_website: {
+        allowNull: true,
+        type: DataTypes.STRING(255),
     },
     location: {
-      allowNull: true,
-      type: DataTypes.STRING(50),
+        allowNull: true,
+        type: DataTypes.STRING(255),
     },
-    position: {
-      allowNull: true,
-      type: DataTypes.INTEGER,
+    email_apply: {
+      allowNull: false,
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
     },
-    notifications: {
+    apply_email: {
+      allowNull: true,
+      type: DataTypes.STRING(255)
+    },
+    apply_link: {
       allowNull: true,
       type: DataTypes.TEXT
     },
-    is_email_verified: {
-      allowNull: false,
+    color: {
+      allowNull: true,
+      type: DataTypes.STRING
+    },
+    is_published: {
       type: DataTypes.BOOLEAN,
+      allowNull: false,
       defaultValue: false,
     },
-    is_register_completed: {
-      allowNull: false,
+    is_featured: {
       type: DataTypes.BOOLEAN,
+      allowNull: false,
       defaultValue: false,
-    },
-    remember_token: {
-      allowNull: true,
-      type: DataTypes.TEXT,
-      defaultValue: DataTypes.TEXT,
-    },
-    activation_token: {
-      allowNull: true,
-      type: DataTypes.TEXT,
-      defaultValue: DataTypes.TEXT,
-    },
-    email_verified_at: {
-      allowNull: true,
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
     },
     status: {
       type: DataTypes.BOOLEAN,
@@ -127,6 +85,11 @@ const User = sequelize.define(
       allowNull: false,
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
+    },
+    published_at: {
+        allowNull: false,
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
     },
     updated_at: {
       allowNull: true,
@@ -157,8 +120,8 @@ const User = sequelize.define(
     freezeTableName: true,
 
     // define the table's name
-    tableName: 'user',
+    tableName: 'career',
   }
 );
 
-module.exports = { User };
+module.exports = { Career };
