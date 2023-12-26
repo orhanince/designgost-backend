@@ -10,7 +10,6 @@ const migrations = require('./utils/sequelize-migrations');
 const sentry = require('./utils/sentry-express');
 const isProduction = require('./utils/is-production');
 const swagger = require('./utils/swagger');
-
 module.exports = (async () => {
   const { PORT } = process.env;
 
